@@ -4,7 +4,6 @@
   "description": "hello world",
   "main": "server.js",
   "scripts": {
-    "test": "nodemon server.js",
     "start": "node server.js"
   },
   "author": "ovyas24",
