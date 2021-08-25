@@ -1,0 +1,16 @@
+{
+  "name": "chunchunmaru",
+  "version": "1.0.0",
+  "description": "hello world",
+  "main": "server.js",
+  "scripts": {
+    "test": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "author": "ovyas24",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "discord.js": "^13.2.0-dev.1629849887.8a8c69a"
+  }
+}
