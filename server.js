@@ -14,6 +14,8 @@ for (const file of commandFiles) {
 	// With the key as the command name and the value as the exported module
 	client.commands.set(command.data.name, command);
 }
+
+console.log('In file below fs')
 // When the client is ready, run this code (only once)
 client.once('ready', () => {
 	console.log('Ready!');
