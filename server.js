@@ -50,21 +50,17 @@ client.on("messageCreate", async (message) => {
         else message.reply("Wtf are you taking about! Try again!") 
     }
     else if(message.content[0] === '/'){
-        const [command, type] = msg.split('-')
+        const [command, para] = msg.split('-')
         if(command === 'joke'){
-            const joke = await getJoke(type)
+            const joke = await getJoke(para)
             message.reply(joke)
-        }
-        if (command === 'fruits') {
-            message.reply('Reacting with fruits!');
-            message.react('🍎');
         }
 
         if(command === 'vote'){
             const [opt1, opt2] = type.split(':');
             message.reply(`Voting : ❤️ - ${opt1} or 💙 - ${opt2}`)
-            message.react('❤️');
-            message.react('💙');
+            message.react('❤️').then(() => message.react('💙'));
+            message.react('💙').then(() => message.react('❤️'));
         }
     }
 })
