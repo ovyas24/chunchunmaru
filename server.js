@@ -1,68 +1,56 @@
-/** @format */
-
-const discord = require("discord.js");
-const config = require("./data/config.json");
-const axios = require("axios");
-
-const getJoke = async (type) => {
-    const types = type ? type : 'Dark';
-    const joke = await axios.get(`https://v2.jokeapi.dev/joke/${types}`)
-                            .then(res => {
-                                if(res.data.type == 'twopart'){
-                                    const setup = res.data.setup
-                                    const delivery = res.data.delivery
-                                    return  setup+" \n"+delivery;
-                                }
-
-                                return res.data.joke
-                            })
-
-    return joke;
-}
+const discord = require('discord.js');
+const { token } = require('./data/config.json');
 
 const intents = new discord.Intents(32767);
 
 const client = new discord.Client({ intents });
+const fs = require('fs');
+client.commands = new discord.Collection();
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
-const greetings = new Set([ "hello", "hi", "hey", "helo" ])
-console.log(greetings);
+for (const file of commandFiles) {
+	const command = require(`./commands/${file}`);
+	// Set a new item in the Collection
+	// With the key as the command name and the value as the exported module
+	client.commands.set(command.data.name, command);
+}
+// When the client is ready, run this code (only once)
+client.once('ready', () => {
+	console.log('Ready!');
+});
 
-console.log("running....")
+client.on('interactionCreate', async interaction => {
+	if (!interaction.isCommand()) return;
 
-client.on("ready", () => {
-    console.log("Bot is online now!")
-})
+	const { commandName } = interaction;
 
-client.on("messageCreate", async (message) => {
-    const user = message.author.username
-    const msg = message.content.slice(1)
-    console.log(user)
-    if(user === 'Reborn55m') message.reply('I love reborn ❤️')
-    if(message.content.toLowerCase() === 'i love you' ){
-        message.reply('🤣 but no one loves you 🤣🤣🤣🤣🤣')
-    }
-    if(message.content.toLowerCase() === 'fuck you') message.reply('No, Fuck You!')
-    if(message.content[0] === '!'){
-        if(user === 'SaGaR') message.reply(`Fuck You`)
-        if(greetings.has(msg.toLowerCase())) {
-            message.reply(`Hello @${user}`);
-        }
-        else message.reply("Wtf are you taking about! Try again!") 
-    }
-    else if(message.content[0] === '/'){
-        const [command, para] = msg.split('-')
-        if(command === 'joke'){
-            const joke = await getJoke(para)
-            message.reply(joke)
-        }
+	if (commandName === 'ping') {
+		await interaction.reply('Pong!');
+	}
+	else if (commandName === 'server') {
+		await interaction.reply(`Server name: ${interaction.guild.name}\nTotal members: ${interaction.guild.memberCount}`);
+	}
+	else if (commandName === 'beep') {
+		await interaction.reply('Boop!');
+	}
 
-        if(command === 'vote'){
-            const [opt1, opt2] = type.split(':');
-            message.reply(`Voting : ❤️ - ${opt1} or 💙 - ${opt2}`)
-            message.react('❤️').then(() => message.react('💙'));
-            message.react('💙').then(() => message.react('❤️'));
-        }
-    }
-})
+	else if (commandName === 'user') {
+		await interaction.reply(`Your tag: ${interaction.user.tag}\nYour id: ${interaction.user.id}`);
+	}
+	else {
+		const command = client.commands.get(interaction.commandName);
 
-client.login(config.token);
+		if (!command) return;
+
+		try {
+			await command.execute(interaction);
+		}
+		catch (error) {
+			console.error(error);
+			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		}
+	}
+});
+
+// Login to Discord with your client's token
+client.login(token);
