@@ -1,6 +1,7 @@
 const discord = require('discord.js');
 const { token } = require('./data/config.json');
 const express = require('express');
+const cron = require('cron');
 const app = express();
 
 const intents = new discord.Intents(32767);
@@ -15,13 +16,25 @@ for (const file of commandFiles) {
 	client.commands.set(command.data.name, command);
 }
 
+let guild;
+
+const scheduledMessage = new cron.CronJob('00 29 * * * *', () => {
+	console.log(' sending -- Scheduled message');
+	const channel = guild.channels.cache.get('688735716871897145');
+	channel.send('Server activation message!!');
+});
+
 console.log('In file below fs');
 
-client.once('ready', () => {
+// eslint-disable-next-line no-shadow
+client.once('ready', (client) => {
 	console.log('Ready!');
+	guild = client.guilds.cache.get('688735716867702818');
+	scheduledMessage.start();
 });
 
 client.on('interactionCreate', async interaction => {
+	console.log('Interaction created', interaction);
 	if (!interaction.isCommand()) return;
 
 	const { commandName } = interaction;
