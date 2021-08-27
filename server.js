@@ -1,5 +1,7 @@
 const discord = require('discord.js');
 const { token } = require('./data/config.json');
+const express = require('express');
+const app = express();
 
 const intents = new discord.Intents(32767);
 
@@ -54,3 +56,12 @@ client.on('interactionCreate', async interaction => {
 
 // Login to Discord with your client's token
 client.login(token);
+
+app.get('/', (req, res) => {
+	res.sendFile('index.html');
+});
+
+
+app.listen(process.env.PORT || 3000, () => {
+	console.log('running!');
+});
