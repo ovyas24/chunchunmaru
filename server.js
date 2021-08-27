@@ -1,4 +1,6 @@
 const discord = require('discord.js');
+const cron = require('cron');
+const axios = require('axios');
 const { token } = require('./data/config.json');
 const express = require('express');
 const app = express();
@@ -21,18 +23,18 @@ for (const file of commandFiles) {
 //
 // });
 
-setInterval(() => {
-	console.log('hello');
-	const guild = client.guilds.cache.get('688735716867702818');
-	const channel = guild.channels.cache.get('688735716871897145');
-	channel.send('keeping server engaged!');
-}, 28 * 60 * 1000);
+const keepAlive = new cron.CronJob('* 20 * * * *', async () => {
+	await axios.get('https://chunchunmaru-bot.herokuapp.com/')
+		.then((res) => console.log('Keeping alive +', res.data))
+		.catch((err) => console.log(err.message));
+});
 
 console.log('In file below fs');
 
 // eslint-disable-next-line no-shadow
 client.once('ready', () => {
 	console.log('Ready!');
+	keepAlive.start();
 });
 
 client.on('interactionCreate', async interaction => {
@@ -40,19 +42,8 @@ client.on('interactionCreate', async interaction => {
 	if (!interaction.isCommand()) return;
 
 	const { commandName } = interaction;
-
-	if (commandName === 'ping') {
-		await interaction.reply('Pong!');
-	}
-	else if (commandName === 'server') {
+	if (commandName === 'server') {
 		await interaction.reply(`Server name: ${interaction.guild.name}\nTotal members: ${interaction.guild.memberCount}`);
-	}
-	else if (commandName === 'beep') {
-		await interaction.reply('Boop!');
-	}
-
-	else if (commandName === 'user') {
-		await interaction.reply(`Your tag: ${interaction.user.tag}\nYour id: ${interaction.user.id}`);
 	}
 	else {
 		const command = client.commands.get(interaction.commandName);
