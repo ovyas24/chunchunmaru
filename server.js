@@ -18,7 +18,7 @@ for (const file of commandFiles) {
 
 let guild;
 
-const scheduledMessage = new cron.CronJob('00 29 * * * *', () => {
+const scheduledMessage = new cron.CronJob('*/05 * * * * *', () => {
 	console.log(' sending -- Scheduled message');
 	const channel = guild.channels.cache.get('688735716871897145');
 	channel.send('Server activation message!!');
