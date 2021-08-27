@@ -23,18 +23,19 @@ for (const file of commandFiles) {
 //
 // });
 
-const keepAlive = new cron.CronJob('* 20 * * * *', async () => {
-	await axios.get('https://chunchunmaru-bot.herokuapp.com/')
-		.then((res) => console.log('Keeping alive +', res.data))
-		.catch((err) => console.log(err.message));
-});
+const keepAlive = () => {
+	setInterval(async () => {
+		await axios.get('https://chunchunmaru-bot.herokuapp.com/')
+			.then((res) => console.log('Keeping alive +', res.data))
+			.catch((err) => console.log(err.message));
+	}, 20 * 60 * 1000);
+};
 
 console.log('In file below fs');
 
 // eslint-disable-next-line no-shadow
 client.once('ready', () => {
 	console.log('Ready!');
-	keepAlive.start();
 });
 
 client.on('interactionCreate', async interaction => {
@@ -69,5 +70,6 @@ app.get('/', (req, res) => {
 
 
 app.listen(process.env.PORT || 3000, () => {
+	keepAlive();
 	console.log('running!');
 });
