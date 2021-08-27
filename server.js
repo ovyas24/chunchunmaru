@@ -1,7 +1,6 @@
 const discord = require('discord.js');
 const { token } = require('./data/config.json');
 const express = require('express');
-const cron = require('cron');
 const app = express();
 
 const intents = new discord.Intents(32767);
@@ -37,7 +36,7 @@ client.once('ready', () => {
 });
 
 client.on('interactionCreate', async interaction => {
-	console.log('Interaction created', interaction);
+	// console.log('Interaction created', interaction);
 	if (!interaction.isCommand()) return;
 
 	const { commandName } = interaction;
