@@ -16,16 +16,25 @@ for (const file of commandFiles) {
 	client.commands.set(command.data.name, command);
 }
 
+// const scheduledMessage = new cron.CronJob('/05 * * * * *', () => {
+// 	console.log(' sending -- Scheduled message');
+
+//
+// });
+
+setInterval(() => {
+	console.log('hello');
+	const guild = client.guilds.cache.get('688735716867702818');
+	const channel = guild.channels.cache.get('688735716871897145');
+	channel.send('keeping server engaged!');
+}, 28 * 60 * 1000);
+
 console.log('In file below fs');
 
 // eslint-disable-next-line no-shadow
 client.once('ready', () => {
 	console.log('Ready!');
 });
-
-setInterval(() => {
-	console.log('wake up system removing idle!');
-}, 10 * 60 * 1000);
 
 client.on('interactionCreate', async interaction => {
 	console.log('Interaction created', interaction);
