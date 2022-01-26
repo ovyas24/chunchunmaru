@@ -23,14 +23,6 @@ for (const file of commandFiles) {
 //
 // });
 
-const keepAlive = () => {
-	setInterval(async () => {
-		await axios.get('https://chunchunmaru-bot.herokuapp.com/')
-			.then((res) => console.log('Keeping alive +', res.data))
-			.catch((err) => console.log(err.message));
-	}, 20 * 60 * 1000);
-};
-
 console.log('In file below fs');
 
 // eslint-disable-next-line no-shadow
